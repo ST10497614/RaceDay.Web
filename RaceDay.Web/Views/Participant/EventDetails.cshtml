@@ -1,0 +1,46 @@
+@model RaceDay.Web.Models.EventViewModel
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<div class="container py-5">
+
+    <div class="card p-4">
+
+        <h1 class="page-heading">@Model.Name</h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.BannerImageUrl))
+        {
+            <img src="@Model.BannerImageUrl" alt="@Model.Name event banner" class="img-fluid rounded mb-4" style="max-height:320px; width:100%; object-fit:cover" />
+        }
+
+        <h5>Event Information</h5>
+
+        <p>@Model.Description</p>
+
+        <hr />
+
+        <p>
+            <strong>Event date:</strong>
+            @Model.Date.ToString("dd MMMM yyyy")
+        </p>
+
+        <p>
+            <strong>Location:</strong>
+            @Model.Location
+        </p>
+
+        <p>
+            <strong>Event number:</strong>
+            @Model.EventId
+        </p>
+
+        <a asp-action="Events"
+           class="btn btn-secondary">
+            Back to Events
+        </a>
+
+    </div>
+
+</div>

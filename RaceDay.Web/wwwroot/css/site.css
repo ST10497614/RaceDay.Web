@@ -1,0 +1,41 @@
+:root {
+    --bs-primary: #ff5722; /* High-energy sporting orange accent */
+    --bs-primary-rgb: 255, 87, 34;
+    --bs-dark: #12161a;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #333333;
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+/* Enrolment Status Color Coding */
+.badge-status-confirmed {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-status-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-status-cancelled {
+    background-color: #dc3545;
+    color: white;
+}
+
+.card {
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .card:hover {
+        transform: translateY(-2px);
+    }

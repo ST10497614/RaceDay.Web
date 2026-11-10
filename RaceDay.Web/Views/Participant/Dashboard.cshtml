@@ -1,0 +1,66 @@
+﻿@model List<RaceDay.Web.Models.EventViewModel>
+
+@{
+    ViewData["Title"] = "Participant Dashboard";
+}
+
+<div class="container py-4">
+
+    <h1 class="page-heading">Participant Dashboard</h1>
+
+    <div class="card p-4 mb-4">
+        <h3>Welcome to RaceDay!</h3>
+        <p>
+            Discover upcoming races, choose your category
+            and start your racing journey.
+        </p>
+
+        <a asp-action="Events"
+           class="btn btn-primary">
+            Browse Upcoming Events
+        </a>
+    </div>
+
+    <h3 class="mb-3">Upcoming Events</h3>
+
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-3 h-100">
+
+                    <h4>@item.Name</h4>
+
+                    <p>@item.Description</p>
+
+                    <p>
+                        <strong>Date:</strong>
+                        @item.Date.ToString("dd MMM yyyy")
+                    </p>
+
+                    <p>
+                        <strong>Location:</strong>
+                        @item.Location
+                    </p>
+
+                    <a asp-action="EventDetails"
+                       asp-route-id="@item.EventId"
+                       class="btn btn-primary mt-auto">
+                        View Event
+                    </a>
+
+                </div>
+            </div>
+        }
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            There are currently no upcoming events.
+        </div>
+    }
+
+</div>

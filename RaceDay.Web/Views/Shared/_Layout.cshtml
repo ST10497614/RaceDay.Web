@@ -1,0 +1,242 @@
+﻿@{
+    var role = Context.Session.GetString("Role");
+    var userName = Context.Session.GetString("UserName");
+    var loggedIn = !string.IsNullOrEmpty(
+        Context.Session.GetString("Token"));
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - RaceDay</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+
+            <a class="navbar-brand"
+               asp-controller="Home"
+               asp-action="Index">
+                RACEDAY
+            </a>
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse"
+                 id="mainNavbar">
+
+                <ul class="navbar-nav me-auto">
+
+                    @if (!loggedIn)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">Home</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Events">Events</a>
+                        </li>
+                    }
+
+                    @if (role == "Organiser")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Organiser"
+                               asp-action="Dashboard">
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Organiser"
+                               asp-action="Events">
+                                Manage Events
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Organiser"
+                               asp-action="Categories">
+                                Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Category"
+                               asp-action="Index">Manage Categories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Organiser"
+                               asp-action="Enrolments">
+                                Enrolments
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Organiser"
+                               asp-action="Results">
+                                Results
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Results"
+                               asp-action="EventResults"
+                               asp-route-eventId="1">
+                                Results
+                            </a>
+                        </li>
+                    }
+
+                    @if (role == "Participant")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Participant"
+                               asp-action="Dashboard">
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Participant"
+                               asp-action="Events">
+                                Browse Events
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Participant"
+                               asp-action="MyEnrolments">
+                                My Enrolments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Enrolment"
+                               asp-action="MyEnrolments">My Enrolments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Participant"
+                               asp-action="MyResults">
+                                My Results
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Participant"
+                               asp-action="Profile">
+                                My Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Results"
+                               asp-action="MyResults">
+                                My Results
+                            </a>
+                        </li>
+
+                    }
+                </ul>
+
+                <ul class="navbar-nav">
+
+                    @if (loggedIn)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                Welcome, @userName
+                            </span>
+                        </li>
+
+                        <li class="nav-item">
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-outline-light btn-sm mt-1">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Account"
+                               asp-action="Login">
+                                Login
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="btn btn-primary btn-sm mt-1"
+                               asp-controller="Account"
+                               asp-action="Register">
+                                Register
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid">
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">
+                &copy; @DateTime.Now.Year RaceDay.
+                Run. Compete. Achieve.
+            </p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

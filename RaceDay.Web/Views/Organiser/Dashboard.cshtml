@@ -1,0 +1,92 @@
+﻿@model List<RaceDay.Web.Models.EventViewModel>
+
+@{
+    ViewData["Title"] = "Organiser Dashboard";
+}
+
+<div class="container py-4">
+
+    <h1 class="page-heading">Organiser Dashboard</h1>
+
+    <p>Welcome to your RaceDay management dashboard.</p>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h5>Total Events</h5>
+                <h2>@ViewBag.TotalEvents</h2>
+                <p>Your created events</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h5>Upcoming Events</h5>
+                <h2>@ViewBag.UpcomingEvents</h2>
+                <p>Events scheduled ahead</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h5>Event Management</h5>
+                <a asp-action="Events"
+                   class="btn btn-primary mt-2">
+                    Manage Events
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Your Events</h3>
+
+        <a asp-action="Create"
+           class="btn btn-primary">
+            + Create Event
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Date.ToString("dd MMM yyyy")</td>
+                            <td>@item.Location</td>
+                            <td>
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.EventId"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            You haven't created any events yet.
+        </div>
+    }
+
+</div>

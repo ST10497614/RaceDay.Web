@@ -1,0 +1,103 @@
+@model RaceDay.Web.Models.EventViewModel
+
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card p-4">
+
+                <h2 class="page-heading">Create New Event</h2>
+
+                <div asp-validation-summary="All"
+                     class="text-danger"></div>
+
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="Name"
+                               class="form-label">
+                            Event Name
+                        </label>
+
+                        <input asp-for="Name"
+                               class="form-control"
+                               placeholder="Enter event name" />
+
+                        <span asp-validation-for="Name"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description"
+                               class="form-label">
+                            Description
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="4"></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Date"
+                               class="form-label">
+                            Event Date
+                        </label>
+
+                        <input asp-for="Date"
+                               type="date"
+                               class="form-control" />
+
+                        <span asp-validation-for="Date"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Location"
+                               class="form-label">
+                            Location
+                        </label>
+
+                        <input asp-for="Location"
+                               class="form-control"
+                               placeholder="Enter event location" />
+
+                        <span asp-validation-for="Location"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="BannerFile" class="form-label">Event banner (JPG, PNG or WEBP; max 5 MB)</label>
+                        <input asp-for="BannerFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+                        <span asp-validation-for="BannerFile" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Create Event
+                    </button>
+
+                    <a asp-action="Events"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,99 @@
+﻿@model IEnumerable<RaceDay.Web.Models.EnrolmentViewModel>
+
+@{
+    ViewData["Title"] = "My Enrolments";
+}
+
+<div class="container mt-4">
+    <h2>My Race Enrolments</h2>
+    <p class="text-muted">
+        View the categories you have entered and their current status.
+    </p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-warning">@TempData["Error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You do not have any enrolments yet.
+            Visit the events page to enter a race.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Enrolment ID</th>
+                        <th>Category</th>
+                        <th>Distance</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var status = item.Status ?? "Unknown";
+
+                        <tr>
+                            <td>@item.EnrolmentId</td>
+                            <td>
+                                @(item.Category?.CategoryName
+                                    ?? $"Category {item.CategoryId}")
+                            </td>
+                            <td>
+                                @(item.Category?.DistanceKm.ToString("0.##")
+                                    ?? "—") km
+                            </td>
+                            <td>
+                                @(item.EnrolmentDate?.ToString("dd MMM yyyy")
+                                    ?? "—")
+                            </td>
+                            <td>
+                                @if (status.Equals("Confirmed",
+                                    StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="badge bg-success">Confirmed</span>
+                                }
+                                else if (status.Equals("Active",
+                                    StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="badge bg-warning text-dark">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@status</span>
+                                }
+                            </td>
+                            <td>
+                                <form asp-action="Cancel"
+                                      method="post"
+                                      onsubmit="return confirm('Cancel this enrolment?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden"
+                                           name="enrolmentId"
+                                           value="@item.EnrolmentId" />
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        Cancel
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
