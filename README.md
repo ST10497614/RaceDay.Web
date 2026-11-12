@@ -3,6 +3,7 @@
 ## Project Overview
 
 RaceDay is a web-based running event management system developed using C# and ASP.NET Core. It allows organisers to manage running events and participants to register, log in and explore available events.
+.
 
 The application uses an MVC web application connected to a separate backend Web API and SQL Server database.
 
