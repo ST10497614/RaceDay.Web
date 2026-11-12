@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using RaceDay.Web.Models;
 using RaceDay.Web.Services;
 
@@ -13,56 +14,67 @@ namespace RaceDay.Web.Controllers
             _eventService = eventService;
         }
 
+        // Check whether the logged-in user is a participant.
         private bool IsParticipant()
         {
-            return HttpContext.Session.GetString("Role") == "Participant"
-                && !string.IsNullOrEmpty(
-                    HttpContext.Session.GetString("Token"));
+            return string.Equals(
+                       HttpContext.Session.GetString("Role"),
+                       "Participant",
+                       StringComparison.OrdinalIgnoreCase)
+                   && !string.IsNullOrEmpty(
+                       HttpContext.Session.GetString("Token"));
         }
 
+        // PARTICIPANT DASHBOARD
+        // Login is required.
+        [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
             if (!IsParticipant())
+            {
                 return RedirectToAction("Login", "Account");
+            }
 
             string token = HttpContext.Session.GetString("Token")!;
 
             var events = await _eventService.GetEventsAsync(token);
 
-            var upcoming = events
+            var upcomingEvents = events
                 .Where(e => e.Date.Date >= DateTime.Today)
                 .OrderBy(e => e.Date)
                 .ToList();
 
-            return View(upcoming);
+            return View(upcomingEvents);
         }
 
+        // EXPLORE EVENTS
+        // Public access: login is not required.
+        // Both URLs are supported.
+        [HttpGet("/Events")]
+        [HttpGet("/Participant/Events")]
         public async Task<IActionResult> Events()
         {
-            if (!IsParticipant())
-                return RedirectToAction("Login", "Account");
+            var events = await _eventService.GetEventsAsync();
 
-            string token = HttpContext.Session.GetString("Token")!;
-
-            var events = await _eventService.GetEventsAsync(token);
-
-            return View(events
-                .Where(e => e.Date.Date >= DateTime.Today)
+            // Display ALL events, including past events.
+            var allEvents = events
                 .OrderBy(e => e.Date)
-                .ToList());
+                .ToList();
+
+            return View(allEvents);
         }
 
+        // EVENT DETAILS
+        // Public access: login is not required.
+        [HttpGet]
         public async Task<IActionResult> EventDetails(int id)
         {
-            if (!IsParticipant())
-                return RedirectToAction("Login", "Account");
-
-            string token = HttpContext.Session.GetString("Token")!;
-
-            var model = await _eventService.GetEventAsync(id, token);
+            var model = await _eventService.GetEventAsync(id);
 
             if (model == null)
-                return NotFound();
+            {
+                return NotFound("Event not found.");
+            }
 
             return View(model);
         }

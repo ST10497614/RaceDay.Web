@@ -1,8 +1,116 @@
 ﻿@{
-    ViewData["Title"] = "RaceDay Home";
+    ViewData["Title"] = "Home";
 }
 
-<div class="container mt-5">
-    <h1>Welcome to RaceDay</h1>
-    <p>Your RaceDay application is running successfully.</p>
-</div>
+<section class="raceday-hero">
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-content">
+        <span class="hero-label">WELCOME TO RACEDAY</span>
+
+        <h1>
+            YOUR RACE.<br />
+            YOUR JOURNEY.<br />
+            <span>YOUR FINISH LINE.</span>
+        </h1>
+
+        <p>
+            Discover exciting running events, challenge yourself
+            and become part of a community that never stops moving.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="/Events" class="btn-raceday">
+                Explore Events <span>→</span>
+            </a>
+
+            <a asp-controller="Account"
+               asp-action="Register"
+               class="btn-outline-light">
+                Join RaceDay
+            </a>
+        </div>
+
+        <div class="hero-stats">
+            <div>
+                <h3>RUN</h3>
+                <small>At your pace</small>
+            </div>
+            <div>
+                <h3>CONNECT</h3>
+                <small>With runners</small>
+            </div>
+            <div>
+                <h3>ACHIEVE</h3>
+                <small>Your goals</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="welcome-section">
+    <div class="container">
+        <div class="section-heading">
+            <span>MORE THAN JUST RUNNING</span>
+            <h2>Every step tells a story.</h2>
+            <p>
+                Whether you're taking your first steps into running
+                or preparing for your next big challenge, RaceDay
+                helps you find an event worth running for.
+            </p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🏃</div>
+                <h3>Discover Events</h3>
+                <p>
+                    Explore running events and find the perfect
+                    challenge for your next adventure.
+                </p>
+                <a href="/Events">Explore events →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🏅</div>
+                <h3>Challenge Yourself</h3>
+                <p>
+                    Set personal goals, take on new distances
+                    and celebrate every achievement.
+                </p>
+                <a asp-controller="Account"
+                   asp-action="Register">Get started →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Join Our Community</h3>
+                <p>
+                    Connect with other participants and experience
+                    the excitement of race day together.
+                </p>
+                <a asp-controller="Home"
+                   asp-action="About">Our story →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="race-cta">
+    <div class="container">
+        <div class="cta-content">
+            <span>THE NEXT FINISH LINE IS YOURS</span>
+            <h2>Ready to make your move?</h2>
+            <p>
+                Sign up today and discover the next event
+                waiting for you.
+            </p>
+
+            <a asp-controller="Account"
+               asp-action="Register"
+               class="btn-raceday">
+                Create Your Account →
+            </a>
+        </div>
+    </div>
+</section>

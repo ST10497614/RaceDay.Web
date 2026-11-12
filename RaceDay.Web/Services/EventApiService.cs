@@ -46,8 +46,9 @@ namespace RaceDay.Web.Services
             return client;
         }
 
+        // GET ALL EVENTS
         public async Task<List<EventViewModel>> GetEventsAsync(
-            string? token = null)
+     string? token = null)
         {
             using var client = CreateClient(token);
 
@@ -57,19 +58,16 @@ namespace RaceDay.Web.Services
                 return new List<EventViewModel>();
 
             var result = await response.Content
-                .ReadFromJsonAsync<List<EventViewModel>>(
-                    _jsonOptions);
+                .ReadFromJsonAsync<List<EventViewModel>>(_jsonOptions);
 
-            var events = result ?? new List<EventViewModel>();
-            foreach (var item in events)
-            {
-                if (await HasBannerAsync(item.EventId)) item.BannerImageUrl = $"/event-banners/{item.EventId}";
-            }
-            return events;
+            // Return all events without checking Azure for every banner.
+            return result ?? new List<EventViewModel>();
         }
 
+        // GET ONE EVENT
         public async Task<EventViewModel?> GetEventAsync(
-            int id, string? token = null)
+            int id,
+            string? token = null)
         {
             using var client = CreateClient(token);
 
@@ -77,13 +75,26 @@ namespace RaceDay.Web.Services
                 $"api/events/{id}");
 
             if (!response.IsSuccessStatusCode)
+            {
                 return null;
+            }
 
-            var item = await response.Content.ReadFromJsonAsync<EventViewModel>(_jsonOptions);
-            if (item is not null && await HasBannerAsync(item.EventId)) item.BannerImageUrl = $"/event-banners/{item.EventId}";
+            var item = await response.Content
+                .ReadFromJsonAsync<EventViewModel>(_jsonOptions);
+
+            if (item != null)
+            {
+                bool hasBanner = await HasBannerAsync(item.EventId);
+
+                item.BannerImageUrl = hasBanner
+                    ? $"/event-banners/{item.EventId}"
+                    : null;
+            }
+
             return item;
         }
 
+        // CREATE EVENT
         public async Task<int?> CreateEventAsync(
             EventViewModel model,
             string token)
@@ -100,47 +111,117 @@ namespace RaceDay.Web.Services
             };
 
             var response = await client.PostAsJsonAsync(
-                "api/events", request);
+                "api/events",
+                request);
 
-            if (!response.IsSuccessStatusCode) return null;
-            var created = await response.Content.ReadFromJsonAsync<CreatedEventResponse>(_jsonOptions);
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var created = await response.Content
+                .ReadFromJsonAsync<CreatedEventResponse>(
+                    _jsonOptions);
+
             return created?.EventId;
         }
 
-        public async Task<bool> UploadBannerAsync(int eventId, IFormFile file, string token)
+        // UPLOAD EVENT BANNER
+        public async Task<bool> UploadBannerAsync(
+            int eventId,
+            IFormFile file,
+            string token)
         {
             using var client = CreateClient(token);
             using var form = new MultipartFormDataContent();
+
             await using var stream = file.OpenReadStream();
+
             using var fileContent = new StreamContent(stream);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-            form.Add(fileContent, "file", Path.GetFileName(file.FileName));
-            var response = await client.PostAsync($"api/events/{eventId}/banner", form);
+
+            fileContent.Headers.ContentType =
+                new MediaTypeHeaderValue(file.ContentType);
+
+            form.Add(
+                fileContent,
+                "file",
+                Path.GetFileName(file.FileName));
+
+            var response = await client.PostAsync(
+                $"api/events/{eventId}/banner",
+                form);
+
             return response.IsSuccessStatusCode;
         }
 
+        // CHECK WHETHER AN EVENT HAS A BANNER
+        // Banner storage errors must not stop event listings.
         private async Task<bool> HasBannerAsync(int eventId)
         {
-            using var client = CreateClient();
-            using var request = new HttpRequestMessage(HttpMethod.Head, $"api/events/{eventId}/banner");
-            using var response = await client.SendAsync(request);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                using var client = CreateClient();
+
+                using var request = new HttpRequestMessage(
+                    HttpMethod.Head,
+                    $"api/events/{eventId}/banner");
+
+                using var response = await client.SendAsync(request);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (HttpRequestException)
+            {
+                return false;
+            }
+            catch (TaskCanceledException)
+            {
+                return false;
+            }
         }
 
-        public async Task<(byte[] Content, string ContentType)?> GetBannerAsync(int eventId)
+        // DOWNLOAD EVENT BANNER
+        public async Task<(byte[] Content, string ContentType)?>
+            GetBannerAsync(int eventId)
         {
-            using var client = CreateClient();
-            var response = await client.GetAsync($"api/events/{eventId}/banner");
-            if (!response.IsSuccessStatusCode) return null;
-            var bytes = await response.Content.ReadAsByteArrayAsync();
-            return (bytes, response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream");
+            try
+            {
+                using var client = CreateClient();
+
+                var response = await client.GetAsync(
+                    $"api/events/{eventId}/banner");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var bytes = await response.Content
+                    .ReadAsByteArrayAsync();
+
+                var contentType = response.Content.Headers
+                    .ContentType?.MediaType
+                    ?? "application/octet-stream";
+
+                return (bytes, contentType);
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
+            }
         }
 
+        // RESPONSE MODEL FOR CREATED EVENTS
         private sealed class CreatedEventResponse
         {
             public int EventId { get; set; }
         }
 
+        // UPDATE EVENT
         public async Task<bool> UpdateEventAsync(
             EventViewModel model,
             string token)
@@ -157,13 +238,16 @@ namespace RaceDay.Web.Services
             };
 
             var response = await client.PutAsJsonAsync(
-                $"api/events/{model.EventId}", request);
+                $"api/events/{model.EventId}",
+                request);
 
             return response.IsSuccessStatusCode;
         }
 
+        // DELETE EVENT
         public async Task<bool> DeleteEventAsync(
-            int id, string token)
+            int id,
+            string token)
         {
             using var client = CreateClient(token);
 
@@ -174,3 +258,4 @@ namespace RaceDay.Web.Services
         }
     }
 }
+
