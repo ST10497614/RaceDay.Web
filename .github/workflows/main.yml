@@ -1,0 +1,41 @@
+
+name: RaceDay CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Locate solution
+        id: solution
+        shell: bash
+        run: |
+          SOLUTION=$(find . -maxdepth 3 -name '*.sln' -print -quit)
+          if [ -z "$SOLUTION" ]; then
+            echo "No solution file found."
+            exit 1
+          fi
+          echo "path=$SOLUTION" >> "$GITHUB_OUTPUT"
+
+      - name: Restore packages
+        run: dotnet restore "${{ steps.solution.outputs.path }}"
+
+      - name: Build RaceDay solution
+        run: dotnet build "${{ steps.solution.outputs.path }}" --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test "${{ steps.solution.outputs.path }}" --no-build --configuration Release --verbosity normal
