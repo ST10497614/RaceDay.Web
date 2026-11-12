@@ -32,5 +32,8 @@ jobs:
       - name: Build Web
         run: dotnet build RaceDay.Web/RaceDay.Web.csproj --configuration Release --no-restore
 
+      - name: Restore API Tests
+        run: dotnet restore RaceDay.API.Tests/RaceDay.API.Tests.vbproj
+
       - name: Run API Tests
-        run: dotnet test RaceDay.API.Tests/RaceDay.API.Tests.csproj --configuration Release
+        run: dotnet test RaceDay.API.Tests/RaceDay.API.Tests.vbproj --configuration Release --no-restore
