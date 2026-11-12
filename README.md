@@ -241,9 +241,8 @@ The application should also be tested for registration, login, role-based access
 
 ## Demonstration Video
 
-**YouTube demonstration link:**  
-[Insert your unlisted YouTube video link here]
-
+ 
+(https://youtu.be/eZ03UkZoYDU?si=B6SqVPpEPp4MSbvq)
 The demonstration should cover:
 - Running the RaceDay application.
 - Public event browsing.
@@ -251,8 +250,6 @@ The demonstration should cover:
 - Organiser functionality.
 - MVC architecture.
 - API and database integration.
-- Azure Blob Storage integration.
-- Docker configuration.
 
 ## Submission Checklist
 
