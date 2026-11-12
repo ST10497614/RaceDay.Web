@@ -9,7 +9,6 @@ The application uses an MVC web application connected to a separate backend Web 
 
 
 ## Features
-
 ### Public Users
 - Browse available running events.
 - View event dates, locations and descriptions.
